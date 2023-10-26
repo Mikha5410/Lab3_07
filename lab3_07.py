@@ -5,28 +5,33 @@ import numpy as np
 import tabulate
 
 #УСТАНОВИТЬ openpyxl
-#################################################################################
 
 spin = 0.5
 plank = 6.62607015e-34
 magneton=5.0507837461e-27
-#################################################################################
+
 cols=[1,2,3]
 data = pd.read_excel('lab7.xlsx', sheet_name = 'Lab7', usecols = cols)
 data.head()
+
 current = data['I'].tolist()
 current = list(map(float, current))
+
 Nfrequency = data['f'].tolist()
 Nfrequency = list(map(float, Nfrequency))
+
 field = data['Bo'].tolist()
 field = list(map(float, field))
-#################################################################################
+
+
 frequency = []
 for val in range (len(current)):
     frequency += [Nfrequency[val]*1000]
+
 Gamma = []
 Momentum = []
 Otn_Momentum = []
+
 for val in range( len(frequency) ):
     Gamma += [frequency[val]/field[val]]
     Momentum += [Gamma[val]*plank*spin]
@@ -34,10 +39,10 @@ for val in range( len(frequency) ):
 SrMomentum = np.mean(Momentum)
 Otn_Momentum = SrMomentum/magneton
 
-#################################################################################
 
 SquareMomentumMinusSrMomentum = []
 MomentumMinusSrMomentum = []
+
 for val in range (len(frequency)):
     MomentumMinusSrMomentum += [Momentum[val] - SrMomentum]
     SquareMomentumMinusSrMomentum += [MomentumMinusSrMomentum[val]**2]
@@ -62,7 +67,6 @@ table = pd.DataFrame({'I' : current,
                    'Otnos Momentum' : Otn_Momentum,
                    'Pogreshnost' :  Pogreshnost
                      })
-
-
 print(table.to_markdown())
-print('Mu = ',Otn_Momentum, '\u00B1',Pogreshnost)
+
+print(f"\U000003BC = {Otn_Momentum:.3f} \u00B1 {Pogreshnost:.3f}")
