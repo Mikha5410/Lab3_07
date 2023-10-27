@@ -40,15 +40,15 @@ SrMomentum = np.mean(Momentum)
 Otn_Momentum = SrMomentum/magneton
 
 
-SquareMomentumMinusSrMomentum = []
-MomentumMinusSrMomentum = []
+Square_Deviation = []
+Deviation = []
 
 for val in range (len(frequency)):
-    MomentumMinusSrMomentum += [Momentum[val] - SrMomentum]
-    SquareMomentumMinusSrMomentum += [MomentumMinusSrMomentum[val]**2]
+    Deviation += [Momentum[val] - SrMomentum]
+    Square_Deviation += [Deviation[val]**2]
 
-SumSquareMomentumMinusSrMomentum = sum(SquareMomentumMinusSrMomentum)
-sigma = np.sqrt(SumSquareMomentumMinusSrMomentum/(10*9))
+Sum_Deviation = sum(Square_Deviation)
+sigma = np.sqrt(Sum_Deviation/(10*9))
 
 ################################################################################
 teta= 1.1 # коэффициент Стьюдента для доверительной вероятность 0.68 и 10 измерений
@@ -56,17 +56,25 @@ teta= 1.1 # коэффициент Стьюдента для доверител�
 
 Pogreshnost = (sigma * teta)/magneton
 
+def precision_round(number, digits):
+    power = "{:e}".format(number).split('e')[1]
+    return round(number, -(int(power) - digits))
 
 
+for val in range(len(frequency)):
+    frequency[val] = precision_round(frequency[val],2)
+    field[val] = precision_round(field[val],2)
+    Momentum[val] = precision_round(Momentum[val],3)
+    Gamma[val] = precision_round(Gamma[val],3)
 
-table = pd.DataFrame({'I' : current,
-                   'f' : frequency,
-                   'B0': field,
-                   'Gamma': Gamma,
-                   'Momentum' : Momentum,
-                   'Otnos Momentum' : Otn_Momentum,
-                   'Pogreshnost' :  Pogreshnost
+
+table = pd.DataFrame({'I, А' : current,
+                   'f, Гц' : frequency,
+                   'B\u2080, Тл': field,
+                   '\u03B3': Gamma,
+                   '\u03BC, Дж*Тл\u207B\u00B9' : Momentum
+
                      })
 print(table.to_markdown())
-
-print(f"\U000003BC = {Otn_Momentum:.3f} \u00B1 {Pogreshnost:.3f}")
+print(f"\u0394\u03BC\u2099 = {Pogreshnost:.3f}")
+print(f"\u03BC\u2099 = {Otn_Momentum:.3f} \u00B1 {Pogreshnost:.3f}")
